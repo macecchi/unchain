@@ -1,10 +1,48 @@
 /* global Pebble; */
 var Unchain = require('./unchain');
 
+function init() {
+    if (localStorage.getItem("server") === null || Unchain.server == '') {
+		Pebble.showSimpleNotificationOnPebble("Almost there!", "Please configure Unchain on the Pebble app.");	
+	} else {
+		updateState();
+	}
+}
+
+function updateState() {
+    Unchain.getState(function(err, state) {
+        if (!err) {
+            var pebbleMsg = { state: state };
+            Pebble.sendAppMessage(pebbleMsg);
+        }
+        else {
+            console.log('Command error: ' + err);
+            Pebble.showSimpleNotificationOnPebble("Unchain Error", "Could not connect to your Mac.");
+        }
+    });
+}
+
+function parseCommand(command) {
+    if (command === "unlock") {
+        Unchain.unlock(function(err, response) {
+            if (!err) {
+                var pebbleMsg = { status: "ok" };
+                Pebble.sendAppMessage(pebbleMsg);
+            }
+            else {
+                console.log('Command error: ' + err);
+                Pebble.showSimpleNotificationOnPebble("Unchain", "Unable to unlock. Check the connection and configuration.");
+            }
+        });
+    }
+}
+
 Pebble.addEventListener("appmessage", function(e) {
 	console.log("Received message: " + JSON.stringify(e.payload));
+    
 	if (e.payload.action) {
-		Unchain.doCommand(e.payload.action);
+        var command = e.payload.action;
+		parseCommand(command);
 	}
 });
 
@@ -22,8 +60,9 @@ Pebble.addEventListener("webviewclosed", function(e) {
 
 		Unchain.server = configuration.server;
 
-		Unchain.getState();
+		updateState();
 	}
 });
 
+init();
 
