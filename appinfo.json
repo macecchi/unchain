@@ -1,0 +1,21 @@
+{
+  "uuid": "21347156-9af6-45da-9297-67cb422c3c8c",
+  "shortName": "Unchain",
+  "longName": "Unchain",
+  "companyName": "Mario Cecchi",
+  "versionLabel": "0.1",
+  "sdkVersion": "3",
+  "targetPlatforms": ["aplite", "basalt", "chalk"],
+  "watchapp": {
+    "watchface": false
+  },
+  "appKeys": {
+    "action": 0
+  },
+  "capabilities": [
+      "configurable"
+  ],
+  "resources": {
+    "media": []
+  }
+}
