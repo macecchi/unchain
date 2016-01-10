@@ -10,7 +10,9 @@
     "watchface": false
   },
   "appKeys": {
-    "action": 0
+    "action": 0,
+    "status": 1,
+    "state": 2
   },
   "capabilities": [
       "configurable"

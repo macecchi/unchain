@@ -8,14 +8,13 @@ var Unchain = {
 
 Unchain.doCommand = function(action) {
 	if (action == "unlock") {
-		Unchain.sendCommand("unlock", "POST");
+		Unchain.sendCommand("unlock");
 	}
 };
 
-Unchain.sendCommand = function(command, method) {
-	if (!method) method = "GET";
+Unchain.sendCommand = function(command) {
 	var url = 'http://' + Unchain.server + ':' + Unchain.port + '/';
-	console.log("Sending " + method + " to " + url);
+	console.log("Sending POST to " + url);
 
 	var data = { cmd: command, pin: Unchain.pin };
 
@@ -39,17 +38,6 @@ Unchain.sendCommand = function(command, method) {
 					pebbleMsg.status = "ok";
 				}
 			
-				// if (responseObj.track) {
-				// 	console.log('Found track info');
-				// 	pebbleMsg.trackName = responseObj.track.name;
-				// 	pebbleMsg.trackArtist = responseObj.track.artist;
-					
-				// 	// Request track info again after a while
-				// 	setTimeout(function() {
-				// 		Unchain.sendCommand('');
-				// 	}, 30000);
-				// }
-			
 				Pebble.sendAppMessage(pebbleMsg);
 			} catch (error) {
 				console.log('Could not decode JSON');
@@ -65,12 +53,60 @@ Unchain.sendCommand = function(command, method) {
 	};
 	
 	req.onerror = function(e) {
+		Pebble.showSimpleNotificationOnPebble("Unchain", "Unable to send command. Check the connection and configuration.");
+		console.log('Request error');
+	};
+	
+	req.open("POST", url, true);
+	req.send(JSON.stringify(data));
+};
+
+Unchain.getState = function() {
+	var url = 'http://' + Unchain.server + ':' + Unchain.port + '/state';
+	console.log("Fetching status from " + url);
+
+	var req = new XMLHttpRequest();
+	req.timeout = 2000;
+	req.onload = function() {
+		if (req.readyState == 4 && req.status === 200) {
+			console.log("Response OK for current state");
+			
+			try {
+				var responseObj = JSON.parse(req.responseText);
+				var pebbleMsg = {};
+				
+				if (responseObj.err) {
+					var err = responseObj.err;
+					console.log('Error: ' + err);
+					pebbleMsg.status = "err";
+				}
+				else {
+					pebbleMsg.status = "ok";
+					if (responseObj.state) {
+						pebbleMsg.state = responseObj.state;
+					}
+				}
+			
+				Pebble.sendAppMessage(pebbleMsg);
+			} catch (error) {
+				console.log('Could not decode JSON');
+			}
+		}
+		else {
+			console.log("Request to " + url + " failed with status " + req.status + " Response: " + req.responseText);
+			if (req.status == 404) {
+				Pebble.showSimpleNotificationOnPebble("Unchain Error", "You are running an outdated version of the Mac app. Please update it on bit.ly/itunesify-update.");	
+			}
+		}
+	};
+	
+	req.onerror = function(e) {
 		Pebble.showSimpleNotificationOnPebble("Unchain", "Unable to connect. Check the connection and configuration.");
 		console.log('Request error');
 	};
 	
-	req.open(method, url, true);
-	req.send(JSON.stringify(data));
+	req.open("GET", url, true);
+	req.send();
 };
 
 Pebble.addEventListener("ready", function(e) {
@@ -78,9 +114,8 @@ Pebble.addEventListener("ready", function(e) {
 
 	if (localStorage.getItem("server") === null || Unchain.server == '') {
 		Pebble.showSimpleNotificationOnPebble("Almost there!", "Please configure Unchain on the Pebble app.");	
-	}
-	else {
-		Unchain.sendCommand('');
+	} else {
+		Unchain.getState();
 	}
 });
 
@@ -104,5 +139,7 @@ Pebble.addEventListener("webviewclosed", function(e) {
 		localStorage.setItem("server", configuration.server);
 
 		Unchain.server = configuration.server;
+
+		Unchain.getState();
 	}
 });
