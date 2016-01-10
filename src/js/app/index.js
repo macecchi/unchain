@@ -27,6 +27,7 @@ function parseCommand(command) {
         Unchain.unlock(function(err, response) {
             if (!err) {
                 var pebbleMsg = { status: "ok" };
+                if (response.status === "unlocked") pebbleMsg.state = "unlocked";
                 Pebble.sendAppMessage(pebbleMsg);
             }
             else {
@@ -34,6 +35,22 @@ function parseCommand(command) {
                 Pebble.showSimpleNotificationOnPebble("Unchain", "Unable to unlock. Check the connection and configuration.");
             }
         });
+    }
+    else if (command === "lock") {
+        Unchain.lock(function(err, response) {
+            if (!err) {
+                var pebbleMsg = { status: "ok" };
+                if (response.status === "screensaver activated") pebbleMsg.state = "locked";
+                Pebble.sendAppMessage(pebbleMsg);
+            }
+            else {
+                console.log('Command error: ' + err);
+                Pebble.showSimpleNotificationOnPebble("Unchain", "Unable to lock. Check the connection and configuration.");
+            }
+        });
+    }
+    else {
+        console.log('Unknown command received (' + command + ').');
     }
 }
 

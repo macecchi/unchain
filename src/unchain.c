@@ -6,6 +6,13 @@ enum {
 	APP_KEY_STATE = 2
 };
 
+typedef enum {
+	MAC_STATE_UNKNOWN,
+	MAC_STATE_LOCKED,
+    MAC_STATE_UNLOCKED
+} MacState;
+
+static MacState macState = MAC_STATE_UNKNOWN;
 static Window *window;
 static TextLayer *text_layer;
 
@@ -17,8 +24,6 @@ static void send_message(char* message) {
 	dict_write_tuplet(iter, &value);
 
 	app_message_outbox_send();
-
-	APP_LOG(APP_LOG_LEVEL_DEBUG, "Sent message");
 }
 
 static void in_received_handler(DictionaryIterator *iter, void *context) {
@@ -33,13 +38,24 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
 	if (state) {
 		if (strcmp(state->value->cstring, "unlocked") == 0) {
 			APP_LOG(APP_LOG_LEVEL_DEBUG, "Mac is unlocked.");
-		}    
+            text_layer_set_text(text_layer, "Mac unlocked");
+            macState = MAC_STATE_UNLOCKED;
+		}
+        else if (strcmp(state->value->cstring, "locked") == 0) {
+			APP_LOG(APP_LOG_LEVEL_DEBUG, "Mac is locked.");
+            text_layer_set_text(text_layer, "Mac locked");
+            macState = MAC_STATE_LOCKED;
+		}
 	}
 }
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
-	text_layer_set_text(text_layer, "Select");
-	send_message("unlock");
+    if (macState == MAC_STATE_LOCKED) {
+        send_message("unlock");
+    }
+    else {
+        send_message("lock");
+    }
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
@@ -60,9 +76,10 @@ static void window_load(Window *window) {
 	Layer *window_layer = window_get_root_layer(window);
 	GRect bounds = layer_get_bounds(window_layer);
 
-	text_layer = text_layer_create((GRect) { .origin = { 0, 72 }, .size = { bounds.size.w, 20 } });
-	text_layer_set_text(text_layer, "Press a button");
+	text_layer = text_layer_create((GRect) { .origin = { 0, 60 }, .size = { bounds.size.w, bounds.size.h } });
+	text_layer_set_text(text_layer, "Connecting...");
 	text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
+	text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
 	layer_add_child(window_layer, text_layer_get_layer(text_layer));
 }
 
