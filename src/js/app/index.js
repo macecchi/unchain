@@ -2,7 +2,7 @@
 var Unchain = require('./unchain');
 
 function init() {
-    if (localStorage.getItem("server") === null || Unchain.server == '') {
+    if (localStorage.getItem("unchain_server") === null || Unchain.server === '') {
 		Pebble.showSimpleNotificationOnPebble("Almost there!", "Please configure Unchain on the Pebble app.");	
 	} else {
 		updateState();
@@ -72,10 +72,12 @@ Pebble.addEventListener("webviewclosed", function(e) {
 		var configuration = JSON.parse(decodeURIComponent(e.response));
 		console.log("Configuration window returned: " + JSON.stringify(configuration));
 
-		console.log("Unchain Server: " + configuration.server);
-		localStorage.setItem("server", configuration.server);
+		console.log("Unchain Server: " + configuration.server + ", PIN: " + configuration.pin);
+		localStorage.setItem("unchain_server", configuration.server);
+		localStorage.setItem("unchain_pin", configuration.pin);
 
 		Unchain.server = configuration.server;
+		Unchain.pin = configuration.pin;
 
 		updateState();
 	}

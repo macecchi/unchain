@@ -1,8 +1,8 @@
 var Unchain = {
-	server: localStorage.getItem("server"),
+	server: localStorage.getItem('unchain_server'),
 	port: 31415,
-	pin: "1234",
-	configureUrl: "https://macecchi.github.io/pebble-itunesify-remote/index.html",
+	pin: localStorage.getItem('unchain_pin'),
+	configureUrl: "https://macecchi.github.io/unchain/",
     
     lock: function(callback) {
         Unchain.sendCommand("lock", callback);
