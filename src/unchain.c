@@ -42,12 +42,12 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
 	if (state) {
 		if (strcmp(state->value->cstring, "unlocked") == 0) {
 			APP_LOG(APP_LOG_LEVEL_DEBUG, "Mac is unlocked.");
-            update_text_with_animation(text_layer, "Mac unlocked");
+            update_text_with_animation(text_layer, "UNLOCKED");
             macState = MAC_STATE_UNLOCKED;
 		}
         else if (strcmp(state->value->cstring, "locked") == 0) {
 			APP_LOG(APP_LOG_LEVEL_DEBUG, "Mac is locked.");
-            update_text_with_animation(text_layer, "Mac locked");
+            update_text_with_animation(text_layer, "LOCKED");
             macState = MAC_STATE_LOCKED;
 		}
 	}
@@ -84,10 +84,11 @@ static void window_load(Window *window) {
 	Layer *window_layer = window_get_root_layer(window);
 	GRect bounds = layer_get_bounds(window_layer);
 
-	text_layer = text_layer_create((GRect) { .origin = { 0, (bounds.size.h / 2) - 24 }, .size = { bounds.size.w, bounds.size.h } });
+	text_layer = text_layer_create((GRect) { .origin = { 0, 115 }, .size = { bounds.size.w, 35 } });
 	text_layer_set_text(text_layer, "Connecting...");
 	text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-	text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
+	text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
+    text_layer_set_background_color(text_layer, GColorClear);
 	layer_add_child(window_layer, text_layer_get_layer(text_layer));
 }
 
@@ -100,6 +101,7 @@ static void window_unload(Window *window) {
 
 static void init(void) {
 	window = window_create();
+    window_set_background_color(window, GColorChromeYellow);
 	window_set_click_config_provider(window, click_config_provider);
 	window_set_window_handlers(window, (WindowHandlers) {
 		.load = window_load,
