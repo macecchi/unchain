@@ -62,8 +62,8 @@
                 'pin': pinInput.value
             };
             // Save for next launch
-            localStorage['server'] = options['server'];
-            localStorage['pin'] = options['pin'];
+            localStorage['unchain_server'] = options['server'];
+            localStorage['unchain_pin'] = options['pin'];
             console.log('Got options: ' + JSON.stringify(options));
             return options;
         }
@@ -90,9 +90,9 @@
             var serverInput = document.getElementById('server_input');
             var pinInput = document.getElementById('pin_input');
             // Load any previously saved configuration, if available
-            if(localStorage['server']) {
-                serverInput.value = localStorage['server'];
-                pinInput.value = localStorage['pin'];
+            if(localStorage['unchain_server'] && localStorage['unchain_pin']) {
+                serverInput.value = localStorage['unchain_server'];
+                pinInput.value = localStorage['unchain_pin'];
             }
         })();
     </script>
