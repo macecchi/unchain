@@ -18,6 +18,17 @@
       "configurable"
   ],
   "resources": {
-    "media": []
+    "media": [
+        {
+            "type": "bitmap",
+            "name": "LOCKED_IMAGE",
+            "file": "locked.png"
+        },
+        {
+            "type": "bitmap",
+            "name": "UNLOCKED_IMAGE",
+            "file": "unlocked.png"
+        }
+    ]
   }
 }
