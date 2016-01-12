@@ -32,6 +32,31 @@ static AppTimer *s_timer;
 static int s_progress;
 
 
+// State handling
+
+static void update_state(MacState state) {
+    macState = state;
+    
+    Layer *window_layer = window_get_root_layer(window);
+    layer_remove_from_parent(s_progress_layer);
+       
+    if (state == MAC_STATE_UNLOCKED) {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Mac is unlocked.");
+        update_text_with_animation(text_layer, "UNLOCKED");
+        layer_remove_from_parent(bitmap_layer_get_layer(locked_bitmap_layer));
+        layer_add_child(window_layer, bitmap_layer_get_layer(unlocked_bitmap_layer));
+        window_set_background_color(window, GColorGreen);
+    }
+    else if (state == MAC_STATE_LOCKED) {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Mac is locked.");
+        update_text_with_animation(text_layer, "LOCKED");
+        layer_remove_from_parent(bitmap_layer_get_layer(unlocked_bitmap_layer));
+        layer_add_child(window_layer, bitmap_layer_get_layer(locked_bitmap_layer));
+        window_set_background_color(window, GColorRed);
+    }
+}
+
+
 // Message handling
 
 static void send_message(char* message) {
@@ -54,21 +79,11 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
 
 	Tuple *state = dict_find(iter, APP_KEY_STATE);
 	if (state) {
-	   Layer *window_layer = window_get_root_layer(window);
-       layer_remove_from_parent(s_progress_layer);
 		if (strcmp(state->value->cstring, "unlocked") == 0) {
-			APP_LOG(APP_LOG_LEVEL_DEBUG, "Mac is unlocked.");
-            update_text_with_animation(text_layer, "UNLOCKED");
-            layer_remove_from_parent(bitmap_layer_get_layer(locked_bitmap_layer));
-            layer_add_child(window_layer, bitmap_layer_get_layer(unlocked_bitmap_layer));
-            macState = MAC_STATE_UNLOCKED;
+			update_state(MAC_STATE_UNLOCKED);
 		}
         else if (strcmp(state->value->cstring, "locked") == 0) {
-			APP_LOG(APP_LOG_LEVEL_DEBUG, "Mac is locked.");
-            update_text_with_animation(text_layer, "LOCKED");
-            layer_remove_from_parent(bitmap_layer_get_layer(unlocked_bitmap_layer));
-            layer_add_child(window_layer, bitmap_layer_get_layer(locked_bitmap_layer));
-            macState = MAC_STATE_LOCKED;
+			update_state(MAC_STATE_LOCKED);
 		}
 	}
 }
