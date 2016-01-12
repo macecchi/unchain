@@ -27,7 +27,7 @@ function parseCommand(command) {
         Unchain.unlock(function(err, response) {
             if (!err) {
                 var pebbleMsg = { status: "ok" };
-                if (response.status === "unlocked") pebbleMsg.state = "unlocked";
+                if (response.state === "unlocked") pebbleMsg.state = "unlocked";
                 Pebble.sendAppMessage(pebbleMsg);
             }
             else {
@@ -40,7 +40,7 @@ function parseCommand(command) {
         Unchain.lock(function(err, response) {
             if (!err) {
                 var pebbleMsg = { status: "ok" };
-                if (response.status === "screensaver activated") pebbleMsg.state = "locked";
+                if (response.state === "locked") pebbleMsg.state = "locked";
                 Pebble.sendAppMessage(pebbleMsg);
             }
             else {
