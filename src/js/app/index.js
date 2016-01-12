@@ -17,7 +17,7 @@ function updateState() {
         }
         else {
             console.log('Command error: ' + err);
-            Pebble.showSimpleNotificationOnPebble("Unchain Error", "Could not connect to your Mac.");
+            Pebble.showSimpleNotificationOnPebble("Unchain", "Could not connect to your Mac.");
         }
     });
 }

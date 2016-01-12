@@ -45,7 +45,7 @@ static void update_state(MacState state) {
         update_text_with_animation(text_layer, "UNLOCKED");
         layer_remove_from_parent(bitmap_layer_get_layer(locked_bitmap_layer));
         layer_add_child(window_layer, bitmap_layer_get_layer(unlocked_bitmap_layer));
-        window_set_background_color(window, GColorGreen);
+        window_set_background_color(window, GColorIslamicGreen);
     }
     else if (state == MAC_STATE_LOCKED) {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "Mac is locked.");
@@ -184,7 +184,7 @@ static void window_disappear(Window *window) {
 
 static void init(void) {
 	window = window_create();
-    window_set_background_color(window, GColorChromeYellow);
+    window_set_background_color(window, GColorYellow);
 	window_set_click_config_provider(window, click_config_provider);
 	window_set_window_handlers(window, (WindowHandlers) {
 		.load = window_load,
