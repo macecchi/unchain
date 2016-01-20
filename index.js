@@ -6,20 +6,21 @@ var UnchainServer = require('./server.js');
 
 var passwordSet = false;
 
-UnchainSecurity.resetPasswords(function(err) {
+// UnchainSecurity.resetPasswords(function(err) {
 
     UnchainSecurity.setUp(function(err, settings) {
         if (err) {
             console.log('Setup error', err);
         } else {
             console.log('Setup ok', settings);
-            
-            if (settings.password) {
+            if (!settings.password) {
+                console.log('Password not set by user');
+                settings.password = 'oi';
                 UnchainServer.start({ pin: settings.pin, password: settings.password });
             } else {
-                console.log('Password not set by user');
+                UnchainServer.start({ pin: settings.pin, password: settings.password });
             }
         }
     });
 
-});
+// });

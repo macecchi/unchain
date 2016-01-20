@@ -1,12 +1,11 @@
+'use strict';
 var http = require( 'http' ),
 
 	// state switches can take time, so must keep track
 	currentState = 'unlocked', awaitedState,
-	maxTries = 20, tries = 0, retryDelay = 500,
+	maxTries = 20, tries = 0, retryDelay = 500;
 
-	isScreenlocked = require( './isScreenlocked' ),
-	lock = require( './lockScript' );
-	
+var UnchainLock = require('./lockScripts');
 var port = 31415;
 var config;
 var unlock;
@@ -14,7 +13,6 @@ var UnchainServer = {
     start: function(_config) {
         config = _config;
         if (config.pin && config.password) {
-            unlock = require( './unlockScript' )( config.password );
             http.createServer(onRequest).listen(port);
             console.log('Started server on port ' + port + ' with settings: ', config);
         } else {
@@ -25,7 +23,6 @@ var UnchainServer = {
 
 
 function onRequest ( req, res ) {
-    'use strict';
 
 	var eventName;
 
@@ -42,43 +39,48 @@ function onRequest ( req, res ) {
 		});
 
 		req.on( 'end', function () {
-			var data = JSON.parse( body );
+            try {
+                var data = JSON.parse(body);
 
-			if ( config.pin !== data.pin ) {
-				eventName = 'incorrect pin';
-                sendJSON( res, { err: eventName });
+                if ( config.pin !== data.pin ) {
+                    eventName = 'incorrect pin';
+                    sendJSON( res, { err: eventName });
 
-			} else if ( data.cmd === 'unlock' ) {
+                } else if ( data.cmd === 'unlock' ) {
 
-				isScreenlocked( function ( isLocked ) {
-					if ( isLocked ) {
-						awaitedState = 'unlocked';
-						currentState = undefined;
-						unlock( res, unlockCallback );
-					} else {
-						currentState = 'unlocked';
-						sendJSON( res, { state: currentState });
-					}
-				});
+                    UnchainLock.isScreenlocked( function ( isLocked ) {
+                        if ( isLocked ) {
+                            awaitedState = 'unlocked';
+                            currentState = undefined;
+                            UnchainLock.unlock( config.password, res, unlockCallback );
+                        } else {
+                            currentState = 'unlocked';
+                            sendJSON( res, { state: currentState });
+                        }
+                    });
 
-				eventName = 'unlocked';
+                    eventName = 'unlocked';
 
-			} else if ( data.cmd === 'lock' ) {
+                } else if ( data.cmd === 'lock' ) {
 
-				isScreenlocked( function ( isLocked ) {
-					if ( !isLocked ) {
-						awaitedState = 'locked';
-						currentState = undefined;
-						lock( res, sleepCallback );
-					} else {
-						currentState = 'locked';
-						sendJSON( res, { state: currentState });
-					}
-				});
-				eventName = 'locked';
-			}
-
-			logRequest( eventName, req );
+                    UnchainLock.isScreenlocked( function ( isLocked ) {
+                        if ( !isLocked ) {
+                            awaitedState = 'locked';
+                            currentState = undefined;
+                            UnchainLock.lock( res, sleepCallback );
+                        } else {
+                            currentState = 'locked';
+                            sendJSON( res, { state: currentState });
+                        }
+                    });
+                    eventName = 'locked';
+                }
+			    logRequest( eventName, req );
+            }
+            catch (err) {
+                console.log('Error:', err);
+                res.end();
+            }
 		});
 
 	} else if ( req.url == '/state' ) {
@@ -89,31 +91,13 @@ function onRequest ( req, res ) {
 }
 
 function awaitAndSendState ( res ) {
-	'use strict';
-
-	if ( tries >= maxTries ) {
-		var err = "Waiting for host to become '" + awaitedState + "' timed out after " + (tries * retryDelay / 1000 ) + " seconds. (current state: " + currentState + ")";
-		log( err );
-		tries = 0;
-		sendJSON( res, { err: err });
-		return;
-	}
-	setTimeout(function () {
-		isScreenlocked( function ( isLocked ) {
-			currentState = isLocked ? 'locked' : 'unlocked';
-			// if ( !awaitedState || currentState === awaitedState ) {
-			// 	tries = 0;
-			// 	awaitedState = false;
-				sendJSON( res, { state: currentState });
-			// }
-			// else awaitAndSendState( res );
-		});
-	}, retryDelay );
-	tries ++;
+    UnchainLock.isScreenlocked( function ( isLocked ) {
+        currentState = isLocked ? 'locked' : 'unlocked';
+        sendJSON( res, { state: currentState });
+    });
 }
 
 function unlockCallback ( res, err, rtn ) {
-    'use strict';
 	var resp = {};
 
 	if ( err ) {
@@ -127,7 +111,6 @@ function unlockCallback ( res, err, rtn ) {
 }
 
 function sleepCallback ( res, err, rtn ) {
-    'use strict';
 	var resp = {};
 
 	if ( err ) {
@@ -140,24 +123,13 @@ function sleepCallback ( res, err, rtn ) {
 	sendJSON( res, resp );
 }
 
-function serveIndex ( res ) {
-    'use strict';
-
-	res.writeHead( 200, { 'Content-Type': 'text/html' });
-	res.end( index );
-}
-
 function sendJSON ( res, resp ) {
-    'use strict';
-
 	res.writeHead( 200, { 'Content-Type': 'application/json' });
 	res.write( JSON.stringify( resp ));
 	res.end();
 }
 
 function logRequest ( eventName, req ) {
-	'use strict';
-
 	var ip = req.headers['x-forwarded-for'] ||
 		req.connection.remoteAddress ||
 		req.socket.remoteAddress ||
@@ -168,8 +140,6 @@ function logRequest ( eventName, req ) {
 }
 
 function log ( logEntry ) {
-    'use strict';
-
 	var now = new Date(),
 		time = now.getFullYear() + '/' + ( now.getMonth() + 1 ) + '/' + now.getDate() + ' ' + now.toTimeString(),
 		logEntry = [ time, logEntry ].join( ' ' );
