@@ -9,6 +9,7 @@
   "author": "Mario Cecchi",
   "license": "ISC",
   "dependencies": {
+    "applescript": "^1.0.0",
     "keychain": "^1.0.0"
   }
 }

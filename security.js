@@ -39,7 +39,7 @@ var UnchainSecurity = {
     },
     
     setRandomPin: function(callback) {
-        var pin = '1234';
+        var pin = Math.floor((Math.random() * 10000));
         keychain.setPassword({ account: 'authpin', service: this.serviceName, password: pin }, function(err) {
             callback(err, pin);
         });
