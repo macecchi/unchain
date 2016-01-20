@@ -16,7 +16,7 @@ function updateState() {
             Pebble.sendAppMessage(pebbleMsg);
         }
         else {
-            console.log('Command error: ' + err);
+            console.log('Error updating state: ' + JSON.stringify(err));
             Pebble.showSimpleNotificationOnPebble("Unchain", "Could not connect to your Mac.");
         }
     });
@@ -31,7 +31,7 @@ function parseCommand(command) {
                 Pebble.sendAppMessage(pebbleMsg);
             }
             else {
-                console.log('Command error: ' + err);
+                console.log('Unlock error: ' + JSON.stringify(err));
                 Pebble.showSimpleNotificationOnPebble("Unchain", "Unable to unlock. Check the connection and configuration.");
             }
         });
@@ -44,7 +44,7 @@ function parseCommand(command) {
                 Pebble.sendAppMessage(pebbleMsg);
             }
             else {
-                console.log('Command error: ' + err);
+                console.log('Lock error: ' + JSON.stringify(err));
                 Pebble.showSimpleNotificationOnPebble("Unchain", "Unable to lock. Check the connection and configuration.");
             }
         });

@@ -1,6 +1,7 @@
 var Unchain = {
 	server: localStorage.getItem('unchain_server'),
 	port: 31415,
+    secure: false,
 	pin: localStorage.getItem('unchain_pin'),
 	configureUrl: "https://macecchi.github.io/unchain/",
     
@@ -13,7 +14,7 @@ var Unchain = {
     },
 
     sendCommand: function(command, callback) {
-        var url = 'http://' + Unchain.server + ':' + Unchain.port + '/';
+        var url = (Unchain.secure ? 'https://' : 'http://') + Unchain.server + ':' + Unchain.port + '/';
         console.log("Sending POST to " + url);
 
         var data = { cmd: command, pin: Unchain.pin };
@@ -43,7 +44,7 @@ var Unchain = {
     },
 
     getState: function(callback) {
-        var url = 'http://' + Unchain.server + ':' + Unchain.port + '/state';
+        var url = (Unchain.secure ? 'https://' : 'http://') + Unchain.server + ':' + Unchain.port + '/state';
         console.log("Fetching status from " + url);
 
         var req = new XMLHttpRequest();
