@@ -1,13 +1,9 @@
 'use strict';
-var http = require('http'),
-
-	// state switches can take time, so must keep track
-	currentState = 'unlocked';
-
+var http = require('http');
 var UnchainLock = require('./lockScripts');
-var port = 31415;
+
 var config;
-var unlock;
+var port = 31415;
 
 var UnchainServer = {
     start: function(_config) {
@@ -21,13 +17,10 @@ var UnchainServer = {
     }
 }
 
-
 function onRequest(req, res) {
-
 	var eventName;
 
 	if (req.method === 'POST') {
-
 		var body = '';
 
 		req.on('data', function(data) {
@@ -47,28 +40,22 @@ function onRequest(req, res) {
                     sendJSON( res, { err: eventName });
 
                 } else if (data.cmd === 'unlock') {
-
                     UnchainLock.isScreenlocked(function(isLocked) {
                         if (isLocked) {
-                            currentState = undefined;
                             UnchainLock.unlock(config.password, res, unlockCallback);
                         } else {
-                            currentState = 'unlocked';
-                            sendJSON(res, { state: currentState });
+                            sendJSON(res, { state: 'unlocked' });
                         }
                     });
 
                     eventName = 'unlocked';
 
                 } else if (data.cmd === 'lock') {
-
                     UnchainLock.isScreenlocked(function(isLocked) {
                         if (!isLocked) {
-                            currentState = undefined;
                             UnchainLock.lock(res, sleepCallback);
                         } else {
-                            currentState = 'locked';
-                            sendJSON(res, { state: currentState });
+                            sendJSON(res, { state: 'locked' });
                         }
                     });
                     eventName = 'locked';
@@ -90,7 +77,7 @@ function onRequest(req, res) {
 
 function sendState(res) {
     UnchainLock.isScreenlocked(function (isLocked) {
-        currentState = isLocked ? 'locked' : 'unlocked';
+        var currentState = isLocked ? 'locked' : 'unlocked';
         sendJSON(res, { state: currentState });
     });
 }
@@ -102,7 +89,6 @@ function unlockCallback(res, err, rtn) {
 		console.error(err);
 		resp.err = err;
 	} else {
-		currentState = 'unlocked';
 		resp.state = 'unlocked';
 	}
     
@@ -116,7 +102,6 @@ function sleepCallback(res, err, rtn) {
 		console.error(err);
 		resp.err = err;
 	} else {
-		currentState = 'locked';
 		resp.state = 'locked';
 	}
     
