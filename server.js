@@ -1,20 +1,20 @@
 'use strict';
-var http = require( 'http' ),
+var http = require('http'),
 
 	// state switches can take time, so must keep track
-	currentState = 'unlocked', awaitedState,
-	maxTries = 20, tries = 0, retryDelay = 500;
+	currentState = 'unlocked';
 
 var UnchainLock = require('./lockScripts');
 var port = 31415;
 var config;
 var unlock;
+
 var UnchainServer = {
     start: function(_config) {
         config = _config;
         if (config.pin && config.password) {
             http.createServer(onRequest).listen(port);
-            console.log('Started server on port ' + port + ' with settings: ', config);
+            console.log('Started server on port ' + port + ' with settings:', config);
         } else {
             console.error('Could not start Unchain server because a parameter was missing');
         }
@@ -22,60 +22,58 @@ var UnchainServer = {
 }
 
 
-function onRequest ( req, res ) {
+function onRequest(req, res) {
 
 	var eventName;
 
-	if ( req.method === 'POST' ) {
+	if (req.method === 'POST') {
 
 		var body = '';
 
-		req.on( 'data', function ( data ) {
+		req.on('data', function(data) {
 			body += data;
 			// kill large requests
-			if ( body.length > 1e4 ) {
+			if (body.length > 1e4) {
 				req.connection.destroy();
 			}
 		});
 
-		req.on( 'end', function () {
+		req.on('end', function() {
             try {
                 var data = JSON.parse(body);
 
-                if ( config.pin !== data.pin ) {
+                if (config.pin !== data.pin) {
                     eventName = 'incorrect pin';
                     sendJSON( res, { err: eventName });
 
-                } else if ( data.cmd === 'unlock' ) {
+                } else if (data.cmd === 'unlock') {
 
-                    UnchainLock.isScreenlocked( function ( isLocked ) {
-                        if ( isLocked ) {
-                            awaitedState = 'unlocked';
+                    UnchainLock.isScreenlocked(function(isLocked) {
+                        if (isLocked) {
                             currentState = undefined;
-                            UnchainLock.unlock( config.password, res, unlockCallback );
+                            UnchainLock.unlock(config.password, res, unlockCallback);
                         } else {
                             currentState = 'unlocked';
-                            sendJSON( res, { state: currentState });
+                            sendJSON(res, { state: currentState });
                         }
                     });
 
                     eventName = 'unlocked';
 
-                } else if ( data.cmd === 'lock' ) {
+                } else if (data.cmd === 'lock') {
 
-                    UnchainLock.isScreenlocked( function ( isLocked ) {
-                        if ( !isLocked ) {
-                            awaitedState = 'locked';
+                    UnchainLock.isScreenlocked(function(isLocked) {
+                        if (!isLocked) {
                             currentState = undefined;
-                            UnchainLock.lock( res, sleepCallback );
+                            UnchainLock.lock(res, sleepCallback);
                         } else {
                             currentState = 'locked';
-                            sendJSON( res, { state: currentState });
+                            sendJSON(res, { state: currentState });
                         }
                     });
                     eventName = 'locked';
                 }
-			    logRequest( eventName, req );
+			    logRequest(eventName, req);
             }
             catch (err) {
                 console.log('Error:', err);
@@ -83,68 +81,70 @@ function onRequest ( req, res ) {
             }
 		});
 
-	} else if ( req.url == '/state' ) {
-		awaitAndSendState( res );
+	} else if (req.url == '/state') {
+		sendState(res);
 		eventName = 'State requested';
-		logRequest( eventName, req );
+		logRequest(eventName, req);
     }
 }
 
-function awaitAndSendState ( res ) {
-    UnchainLock.isScreenlocked( function ( isLocked ) {
+function sendState(res) {
+    UnchainLock.isScreenlocked(function (isLocked) {
         currentState = isLocked ? 'locked' : 'unlocked';
-        sendJSON( res, { state: currentState });
+        sendJSON(res, { state: currentState });
     });
 }
 
-function unlockCallback ( res, err, rtn ) {
+function unlockCallback(res, err, rtn) {
 	var resp = {};
 
-	if ( err ) {
-		console.error( err );
+	if (err) {
+		console.error(err);
 		resp.err = err;
 	} else {
 		currentState = 'unlocked';
 		resp.state = 'unlocked';
 	}
-	sendJSON( res, resp );
+    
+	sendJSON(res, resp);
 }
 
-function sleepCallback ( res, err, rtn ) {
+function sleepCallback(res, err, rtn) {
 	var resp = {};
 
-	if ( err ) {
-		console.error( err );
+	if (err) {
+		console.error(err);
 		resp.err = err;
 	} else {
 		currentState = 'locked';
 		resp.state = 'locked';
 	}
-	sendJSON( res, resp );
+    
+	sendJSON(res, resp);
 }
 
-function sendJSON ( res, resp ) {
-	res.writeHead( 200, { 'Content-Type': 'application/json' });
-	res.write( JSON.stringify( resp ));
+function sendJSON (res, resp) {
+	res.writeHead(200, { 'Content-Type': 'application/json' });
+	res.write(JSON.stringify(resp));
 	res.end();
 }
 
-function logRequest ( eventName, req ) {
+function logRequest(eventName, req) {
 	var ip = req.headers['x-forwarded-for'] ||
 		req.connection.remoteAddress ||
 		req.socket.remoteAddress ||
 		req.connection.socket.remoteAddress,
-	logEntry = [ eventName, 'from', ip ].join( ' ' );
+	logEntry = [ eventName, 'from', ip ].join(' ');
 
-	log( logEntry );
+	log(logEntry);
 }
 
-function log ( logEntry ) {
+function log(logEntry) {
 	var now = new Date(),
-		time = now.getFullYear() + '/' + ( now.getMonth() + 1 ) + '/' + now.getDate() + ' ' + now.toTimeString(),
-		logEntry = [ time, logEntry ].join( ' ' );
+		time = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate() + ' ' + now.toTimeString(),
+		logEntry = [ time, logEntry ].join(' ');
 
-	console.log( logEntry );
+	console.log(logEntry);
 }
 
 module.exports = UnchainServer;
