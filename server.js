@@ -108,7 +108,7 @@ function sleepCallback(res, err, rtn) {
 	sendJSON(res, resp);
 }
 
-function sendJSON (res, resp) {
+function sendJSON(res, resp) {
 	res.writeHead(200, { 'Content-Type': 'application/json' });
 	res.write(JSON.stringify(resp));
 	res.end();
