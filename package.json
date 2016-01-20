@@ -1,0 +1,14 @@
+{
+  "name": "unchain-osx",
+  "version": "0.1.0",
+  "description": "Lock and unlock your Mac from your Pebble smartwatch",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mario Cecchi",
+  "license": "ISC",
+  "dependencies": {
+    "keychain": "^1.0.0"
+  }
+}
