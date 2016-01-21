@@ -7,7 +7,7 @@ module.exports = {
         var lockScript = 'do shell script "./lockscreen"';
 
         applescript.execString(lockScript, function(err, rtn) {
-            callback(res, err, rtn);
+            if (callback) callback(res, err, rtn);
         });
     },
 
@@ -51,7 +51,7 @@ module.exports = {
             end tell';
         
         applescript.execString(unlockScript, function(err, rtn) {
-            callback(res, err, rtn);
+            if (callback) callback(res, err, rtn);
         });
     }
 };
