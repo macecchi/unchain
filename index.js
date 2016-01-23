@@ -1,26 +1,45 @@
 'use strict';
-
+var UnchainLock = require('./lockScripts');
 var UnchainSecurity = require('./security.js');
 var UnchainServer = require('./server.js');
-// var gui = require('nw.gui');
+var nw = require('nw.gui');
+var UnchainGUI = require('./gui');
 
-var passwordSet = false;
+function didLoadViewCallback(menu) {
 
-// UnchainSecurity.resetPasswords(function(err) {
+UnchainSecurity.resetPasswords(function(err) {
 
     UnchainSecurity.setUp(function(err, settings) {
         if (err) {
             console.log('Setup error', err);
-        } else {
+        }
+        else {
             console.log('Setup ok', settings);
+            
             if (!settings.password) {
                 console.log('Password not set by user');
-                settings.password = 'oi';
+                UnchainGUI.showSetPasswordMenu();
+            }
+            else {
                 UnchainServer.start({ pin: settings.pin, password: settings.password });
-            } else {
-                UnchainServer.start({ pin: settings.pin, password: settings.password });
+                UnchainGUI.showRunningMenu();
+                menu.popup(10,10);
             }
         }
     });
 
-// });
+});
+}
+
+function lockCallback() {
+    UnchainLock.lock();
+}
+
+function quitCallback() {
+    console.log('Tapped quit');
+    //serverquit
+    nw.App.quit();
+}
+
+UnchainGUI.setUp(nw, didLoadViewCallback, lockCallback, quitCallback);
+
