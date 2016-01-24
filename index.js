@@ -22,7 +22,7 @@ function didLoadViewCallback(menu) {
                 UnchainServer.start({ pin: settings.pin, password: settings.password });
                 UnchainGUI.showRunningMenu();
                 UnchainGUI.showSetPasswordMenu(didSetPasswordCallback);
-                menu.popup(10,10);
+
             }
         }
     });
