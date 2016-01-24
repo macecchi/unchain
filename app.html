@@ -2,5 +2,24 @@
 <html>
 <head>
 <script type="text/javascript" src="index.js"></script>
+<script>
+    var UnchainSecurity = require('./security.js');
+    
+    onload = function() {
+        var passwordForm = document.getElementById('password-form');
+        var passwordField = document.getElementById('password');
+        passwordForm.onsubmit = function() {
+            var newPassword = passwordField.value;
+            UnchainSecurity.setPassword(newPassword);
+            window.close();
+        };
+    }
+</script>
 </head>
+<body>
+    <form id="password-form">
+        <input type="password" name="password" id="password">
+        <input type="submit" value="Save">
+    </form>
+</body>
 </html>

@@ -5,7 +5,8 @@
   "main": "app.html",
   "single-instance": true,
   "window": {
-    "name": "Unchain",
+    "title": "Unchain Preferences",
+    "toolbar": false,
     "show": false,
     "show_in_taskbar": false
   },

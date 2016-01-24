@@ -1,11 +1,13 @@
 'use strict';
 var packageInfo = require('./package.json');
 
-var nw, tray, menu;
+var nw, window, tray, menu;
+var runningMenu, setPasswordMenu;
 
 module.exports = {
-    setUp: function (_nw, didLoadCallback, lockCallback, quitCallback) {
+    setUp: function(_nw, didLoadCallback, lockCallback, quitCallback) {
         nw = _nw;
+        window = nw.Window.get();
         
         tray = new nw.Tray({
             icon: 'resources/images/bar_icon.png'
@@ -36,21 +38,33 @@ module.exports = {
         didLoadCallback(menu);
     },
 
-    showRunningMenu: function () {
+    showRunningMenu: function() {
         require('dns').lookup(require('os').hostname(), function (err, ip, fam) {
-            menu.insert(new nw.MenuItem({
+            runningMenu = new nw.MenuItem({
                 label: 'Running on ' + ip,
                 enabled: false
-            }), 0);
+            });
+            menu.insert(runningMenu, 0);
         });
     },
     
+    hideRunningMenu: function() {
+        menu.remove(runningMenu);
+    },
+    
     showSetPasswordMenu: function(didSetPasswordCallback) {
-        menu.insert(new nw.MenuItem({
+        setPasswordMenu = new nw.MenuItem({
             label: 'Set your password',
             click: function() {
+                window.show();
+                window.focus();
                 if (didSetPasswordCallback) didSetPasswordCallback();
             }
-        }), 0);
+        });
+        menu.insert(setPasswordMenu, 0);
+    },
+    
+    hideSetPasswordMenu: function() {
+        menu.remove(setPasswordMenu);
     }
 };
