@@ -72,8 +72,9 @@ function lockCallback() {
 
 function quitCallback() {
     console.log('Tapped quit');
-    //serverquit
-    nw.App.quit();
+    UnchainServer.stop(function() {
+        nw.App.quit();
+    })
 }
 
 UnchainGUI.setUp(nw, appDidFinishLaunching, lockCallback, quitCallback);

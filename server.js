@@ -3,21 +3,27 @@ var http = require('http');
 var UnchainLock = require('./lockScripts');
 
 var config;
+var server;
 var port = 31415;
 
 var UnchainServer = {
     start: function(_config, callback) {
         config = _config;
-        var error;
+        var error = null;
         
         if (config.pin && config.password) {
-            http.createServer(onRequest).listen(port);
+            server = http.createServer(onRequest);
+            server.listen(port);
             console.log('Started server on port ' + port + ' with settings:', config);
         } else {
             error = new Error('Could not start Unchain server because a parameter was missing');
         }
         
         callback(error);
+    },
+    
+    stop: function(callback) {
+        server.close(callback);
     }
 }
 
