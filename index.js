@@ -9,7 +9,6 @@ var serverSettings;
 var serverStarted = false;
 
 function appDidFinishLaunching(menu) {
-UnchainSecurity.resetPasswords(function(err) {
     UnchainSecurity.setUp(function(err, settings) {
         if (err) {
             console.error('Setup error', err);
@@ -36,7 +35,6 @@ UnchainSecurity.resetPasswords(function(err) {
         });
 
     });
-});
 }
 
 function didSetPassword() {
@@ -83,5 +81,13 @@ function quitCallback() {
     })
 }
 
-UnchainGUI.setUp(nw, appDidFinishLaunching, lockCallback, quitCallback);
+if (nw.App.argv.indexOf('--reset') > -1) {
+    UnchainSecurity.resetPasswords(function(err) {
+        console.log('All passwords reset');
+        UnchainGUI.setUp(nw, appDidFinishLaunching, lockCallback, quitCallback);
+    });
+}
+else {
+    UnchainGUI.setUp(nw, appDidFinishLaunching, lockCallback, quitCallback);
+}
 
