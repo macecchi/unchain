@@ -6,6 +6,7 @@ var UnchainSecurity = require('./security.js');
 var UnchainServer = require('./server.js');
 
 var serverSettings;
+var serverStarted = false;
 
 function appDidFinishLaunching(menu) {
 UnchainSecurity.resetPasswords(function(err) {
@@ -48,6 +49,10 @@ function didSetPassword() {
         console.log('Did set password');
         serverSettings.password = pass;
         
+        if (serverStarted) {
+            return;
+        }
+        
         UnchainServer.start({ pin: serverSettings.pin, password: serverSettings.password }, function(startError) {
             if (startError) {
                 console.error(startError.message);
@@ -62,6 +67,7 @@ function didSetPassword() {
 
 function didStartServer() {
     console.log('did start server');
+    serverStarted = true;
     UnchainGUI.showRunningMenu();
     UnchainGUI.showSetPasswordMenu('Preferences');
 }
