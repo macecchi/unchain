@@ -1,9 +1,9 @@
 'use strict';
 var nw = require('nw.gui');
-var UnchainGUI = require('./gui');
-var UnchainLock = require('./lockScripts');
-var UnchainSecurity = require('./security.js');
-var UnchainServer = require('./server.js');
+var UnchainGUI = require('../gui');
+var UnchainLock = require('../lockScripts');
+var UnchainSecurity = require('../security.js');
+var UnchainServer = require('../server.js');
 
 var serverSettings;
 var serverStarted = false;
@@ -15,7 +15,7 @@ function appDidFinishLaunching() {
             return;
         }
 
-        console.log('Setup ok', settings);
+        console.log('Setup ok ' + settings);
         serverSettings = settings;
         
         UnchainGUI.setUp(nw, function() {

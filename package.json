@@ -2,13 +2,15 @@
   "name": "unchain-osx",
   "version": "0.1.0",
   "description": "Lock and unlock your Mac from your Pebble smartwatch",
-  "main": "app.html",
+  "main": "app/index.html",
   "single-instance": true,
   "window": {
     "title": "Unchain Preferences",
     "toolbar": false,
     "show": false,
-    "show_in_taskbar": false
+    "show_in_taskbar": false,
+    "width": 400,
+    "height": 200
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

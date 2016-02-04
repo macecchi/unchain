@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="style.css">
+<script type="application/javascript" src="../index.js"></script>
+<script>
+    onload = function() {
+        var window = nw.Window.get();
+        
+        setTimeout(loadPin, 1000);
+        
+        window.on('close', function() {
+            savePassword();
+            window.hide();
+        });
+        
+        function loadPin() {
+            UnchainSecurity.getPin(function(err, pin) {
+                if (err) {
+                    console.log('Error loading PIN');
+                    return;
+                }
+                var pinCode = document.getElementById('pin-code');
+                console.log('pin ' + pin)
+                pinCode.innerHTML = pin;
+            });
+        }
+    
+        function savePassword() {
+            var passwordField = document.getElementById('password');
+            var newPassword = passwordField.value;
+            
+            if (newPassword) {
+                UnchainSecurity.setPassword(newPassword, function() {
+                    didSetPassword();
+                });
+                passwordField.value = '';
+            }
+        }
+    }
+</script>
+</head>
+<body>
+    <div class="row">
+        <label for="pin-code">PIN:</label>
+        <span id="pin-code" class="pin">----</span>
+    </div>
+    
+    <div class="row">
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password">
+    </div>
+
+</body>
+</html>

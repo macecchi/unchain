@@ -1,0 +1,34 @@
+body {
+    font-family: -apple-system, Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+    background-color: #E7E7E7;
+    color: #000000;
+    margin: 50px 20px;
+}
+
+.row {
+    margin: 10px auto;
+}
+
+input {
+    font-family: -apple-system, Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    background-color: #FFFFFF;
+    border: 1px solid #C1C2C2;
+    box-shadow: 0 1px 1px #DEDFDE;
+    padding: 3px 8px;
+}
+
+label {
+    width: 120px;
+    display: inline-block;
+    text-align: right;
+    margin-right: 15px;
+}
+
+.pin {
+    font-size: 25px;
+    vertical-align: middle;
+    letter-spacing: 8px;
+}

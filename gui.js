@@ -8,6 +8,7 @@ module.exports = {
     setUp: function(_nw, didLoadCallback, lockCallback, quitCallback) {
         nw = _nw;
         window = nw.Window.get();
+        window.setResizable(false);
         
         tray = new nw.Tray({
             icon: 'resources/images/bar_icon.png'
