@@ -13,12 +13,35 @@
     "height": 200
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nw",
+    "archive": "nwbuild -p osx64 -v 0.12.3 ."
   },
   "author": "Mario Cecchi",
   "license": "ISC",
   "dependencies": {
     "applescript": "^1.0.0",
     "keychain": "^1.0.0"
-  }
+  },
+  "devDependencies": {
+    "nw-builder": "^2.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/macecchi/unchain-osx.git"
+  },
+  "keywords": [
+    "pebble",
+    "mac",
+    "os",
+    "x",
+    "unlock",
+    "lock",
+    "unchain",
+    "remote"
+  ],
+  "bugs": {
+    "url": "https://github.com/macecchi/unchain-osx/issues"
+  },
+  "homepage": "https://github.com/macecchi/unchain-osx#readme"
 }
