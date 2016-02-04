@@ -5,7 +5,9 @@ var UnchainLock = require('./lockScripts');
 var UnchainSecurity = require('./security.js');
 var UnchainServer = require('./server.js');
 
-function didLoadViewCallback(menu) {
+var serverSettings;
+
+function appDidFinishLaunching(menu) {
 // UnchainSecurity.resetPasswords(function(err) {
     UnchainSecurity.setUp(function(err, settings) {
         if (err) {
@@ -13,26 +15,27 @@ function didLoadViewCallback(menu) {
         }
         else {
             console.log('Setup ok', settings);
+            serverSettings = settings;
             
             if (!settings.password) {
                 console.log('Password not set by user');
-                UnchainGUI.showSetPasswordMenu(didSetPasswordCallback);
+                UnchainGUI.showSetPasswordMenu('Configure');
+                UnchainGUI.showPreferencesWindow();
             }
             else {
-                UnchainServer.start({ pin: settings.pin, password: settings.password });
+                UnchainServer.start({ pin: serverSettings.pin, password: serverSettings.password });
                 UnchainGUI.showRunningMenu();
-                UnchainGUI.showSetPasswordMenu(didSetPasswordCallback);
-
+                UnchainGUI.showSetPasswordMenu('Preferences');
             }
         }
     });
 // });
 }
 
-function didSetPasswordCallback() {
+function didSetPassword() {
     console.log('Did set password');
     UnchainGUI.hideSetPasswordMenu();
-    // todo: start server
+    UnchainServer.start({ pin: serverSettings.pin, password: serverSettings.password });
     UnchainGUI.showRunningMenu();
 }
 
@@ -46,5 +49,5 @@ function quitCallback() {
     nw.App.quit();
 }
 
-UnchainGUI.setUp(nw, didLoadViewCallback, lockCallback, quitCallback);
+UnchainGUI.setUp(nw, appDidFinishLaunching, lockCallback, quitCallback);
 

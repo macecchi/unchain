@@ -3,15 +3,21 @@
 <head>
 <script type="application/javascript" src="index.js"></script>
 <script>
-    var UnchainSecurity = require('./security.js');
-    
     onload = function() {
+        var window = nw.Window.get();
+        
+        window.on('close', function() {
+            window.hide();
+        });
+    
         var passwordForm = document.getElementById('password-form');
         var passwordField = document.getElementById('password');
         passwordForm.onsubmit = function() {
             var newPassword = passwordField.value;
             UnchainSecurity.setPassword(newPassword);
-            window.close();
+            window.hide();
+            didSetPassword();
+            return false;
         };
     }
 </script>

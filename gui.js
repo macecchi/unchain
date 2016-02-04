@@ -39,7 +39,7 @@ module.exports = {
     },
 
     showRunningMenu: function() {
-        require('dns').lookup(require('os').hostname(), function (err, ip, fam) {
+        require('dns').lookup(require('os').hostname(), function(err, ip, fam) {
             runningMenu = new nw.MenuItem({
                 label: 'Running on ' + ip,
                 enabled: false
@@ -52,19 +52,20 @@ module.exports = {
         menu.remove(runningMenu);
     },
     
-    showSetPasswordMenu: function(didSetPasswordCallback) {
+    showSetPasswordMenu: function(label) {
         setPasswordMenu = new nw.MenuItem({
-            label: 'Set your password',
-            click: function() {
-                window.show();
-                window.focus();
-                if (didSetPasswordCallback) didSetPasswordCallback();
-            }
+            label: label,
+            click: this.showPreferencesWindow
         });
         menu.insert(setPasswordMenu, 0);
     },
     
     hideSetPasswordMenu: function() {
         menu.remove(setPasswordMenu);
+    },
+    
+    showPreferencesWindow: function() {
+        window.show();
+        window.focus();
     }
 };
