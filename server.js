@@ -14,7 +14,7 @@ var UnchainServer = {
         if (config.pin && config.password) {
             server = http.createServer(onRequest);
             server.listen(port);
-            console.log('Started server on port ' + port + ' with settings:', config);
+            console.log('Starting server on port ' + port);
         } else {
             error = new Error('Could not start Unchain server because a parameter was missing');
         }

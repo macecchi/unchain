@@ -64,7 +64,7 @@ function didSetPassword() {
 }
 
 function didStartServer() {
-    console.log('did start server');
+    console.log('Server started');
     serverStarted = true;
     UnchainGUI.showRunningMenu();
     UnchainGUI.showSetPasswordMenu('Preferences');
