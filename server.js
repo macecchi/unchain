@@ -6,14 +6,18 @@ var config;
 var port = 31415;
 
 var UnchainServer = {
-    start: function(_config) {
+    start: function(_config, callback) {
         config = _config;
+        var error;
+        
         if (config.pin && config.password) {
             http.createServer(onRequest).listen(port);
             console.log('Started server on port ' + port + ' with settings:', config);
         } else {
-            console.error('Could not start Unchain server because a parameter was missing');
+            error = new Error('Could not start Unchain server because a parameter was missing');
         }
+        
+        callback(error);
     }
 }
 

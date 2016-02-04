@@ -11,12 +11,15 @@
         });
     
         var passwordForm = document.getElementById('password-form');
-        var passwordField = document.getElementById('password');
         passwordForm.onsubmit = function() {
+            var passwordField = document.getElementById('password');
             var newPassword = passwordField.value;
-            UnchainSecurity.setPassword(newPassword);
+            UnchainSecurity.setPassword(newPassword, function() {
+                didSetPassword();
+            });
+            passwordField.value = '';
+            passwordField.focus();
             window.hide();
-            didSetPassword();
             return false;
         };
     }
