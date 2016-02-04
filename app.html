@@ -9,6 +9,11 @@
         window.on('close', function() {
             window.hide();
         });
+        
+        UnchainSecurity.getPin(function(err, pin) {
+            var pinCodeDiv = document.getElementById('pin-code');
+            pinCodeDiv.innerHTML = pin;
+        });
     
         var passwordForm = document.getElementById('password-form');
         passwordForm.onsubmit = function() {
@@ -26,6 +31,7 @@
 </script>
 </head>
 <body>
+    <p>Your PIN is: <div id="pin-code"></div></p>
     <form id="password-form">
         <input type="password" name="password" id="password">
         <input type="submit" value="Save">

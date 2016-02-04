@@ -35,7 +35,7 @@ module.exports = {
             click: quitCallback
         }));
         
-        didLoadCallback(menu);
+        didLoadCallback();
     },
 
     showRunningMenu: function() {
