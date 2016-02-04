@@ -15,7 +15,7 @@ function appDidFinishLaunching() {
             return;
         }
 
-        console.log('Setup ok ' + settings);
+        console.log('Setup ok');
         serverSettings = settings;
         
         UnchainGUI.setUp(nw, function() {

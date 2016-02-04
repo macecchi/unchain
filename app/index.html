@@ -6,18 +6,31 @@
 <script>
     onload = function() {
         var window = nw.Window.get();
+        var passwordForm = document.getElementById('password-form');
+        var passwordButton = document.getElementById('password-button');
+        var passwordField = document.getElementById('password');
+        var pinCode = document.getElementById('pin-code');
         
+        loadIP();
         setTimeout(loadPin, 1000);
         
         window.on('close', function() {
-            savePassword();
             window.hide();
         });
         
-        document.getElementById('password-form').onsubmit = function() {
-            savePassword();
+        passwordForm.onsubmit = function() {
+            if (savePassword()) {
+                passwordField.style.display = 'none';
+                passwordButton.style.display = 'inline';
+            }
             return false;
         };
+        
+        passwordButton.onclick = function() {
+            passwordField.style.display = 'inline';
+            passwordButton.style.display = 'none';
+            passwordField.focus();
+        }
         
         function loadPin() {
             UnchainSecurity.getPin(function(err, pin) {
@@ -25,8 +38,13 @@
                     console.log('Error loading PIN');
                     return;
                 }
-                var pinCode = document.getElementById('pin-code');
                 pinCode.innerHTML = pin;
+            });
+        }
+        
+        function loadIP() {
+            require('dns').lookup(require('os').hostname(), function(err, ip, fam) {
+                document.getElementById('ip').innerHTML = ip;
             });
         }
     
@@ -39,12 +57,26 @@
                     didSetPassword();
                 });
                 passwordField.value = '';
+                return true;
             }
+            
+            return false;
         }
     }
 </script>
 </head>
 <body>
+    <div class="title">
+        <p>
+            Use the IP address and PIN below to configure Unchain on the Pebble app.
+        </p>
+    </div>
+        
+    <div class="row">
+        <label for="ip">IP address:</label>
+        <span id="ip" class="ip">-</span>
+    </div>
+    
     <div class="row">
         <label for="pin-code">PIN:</label>
         <span id="pin-code" class="pin">----</span>
@@ -52,8 +84,9 @@
     
     <div class="row">
         <form id="password-form">
-        <label for="password">Password:</label>
-        <input type="password" name="password" id="password">
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password" style="display:none;">
+            <input type="button" name="password-button" id="password-button" value="Set password" style="">
         </form>
     </div>
 

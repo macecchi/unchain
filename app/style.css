@@ -4,7 +4,29 @@ body {
     -webkit-font-smoothing: antialiased;
     background-color: #E7E7E7;
     color: #000000;
-    margin: 50px 20px;
+    overflow: hidden;
+    margin: 0;
+    -webkit-user-select: none;
+    cursor: default;
+}
+
+.title {
+    background-color: #CECFCE;
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    text-align: center;
+    color: #444;
+    -webkit-app-region: drag;
+}
+
+.title h1 {
+    font-size: 15px;
+    font-weight: normal;
+    color: #333;
+}
+
+.title p {
+    margin: 0;
 }
 
 .row {
@@ -18,10 +40,24 @@ input {
     border: 1px solid #C1C2C2;
     box-shadow: 0 1px 1px #DEDFDE;
     padding: 3px 8px;
+    vertical-align: middle;
+}
+
+input[type=button] {
+    border-radius: 5px;
+    font-size: 13px;
+}
+
+input[type=button]:hover {
+    border-color: #999;
+}
+
+input[type=password] {
+    width: 100px;
 }
 
 label {
-    width: 120px;
+    width: 40%;
     display: inline-block;
     text-align: right;
     margin-right: 15px;
