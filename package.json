@@ -15,7 +15,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nw",
-    "archive": "nwbuild -p osx64 -v 0.12.3 ."
+    "archive": "node build.js"
   },
   "author": "Mario Cecchi",
   "license": "ISC",
