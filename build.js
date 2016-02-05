@@ -1,6 +1,6 @@
 var NwBuilder = require('nw-builder');
 var nw = new NwBuilder({
-    files: './**/**',
+    files: ['**/**', '!build/**/**'],
     cacheDir: './build/cache',
     platforms: ['osx64'],
     version: '0.12.3',
