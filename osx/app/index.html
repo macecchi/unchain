@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="style.css">
+<script type="application/javascript" src="../index.js"></script>
+<script>
+window.onload = function() {
+    var win = nw.Window.get();
+    var passwordForm = document.getElementById('password-form');
+    var passwordButton = document.getElementById('password-button');
+    var passwordField = document.getElementById('password');
+    var pinCode = document.getElementById('pin-code');
+    
+    loadIP();
+    setTimeout(loadPin, 1000);
+    
+    win.on('close', function() {
+        win.hide();
+    });
+    
+    win.on('focus', function() {
+        passwordButton.blur();
+    });
+    
+    passwordForm.onsubmit = function() {
+        if (savePassword()) {
+            passwordField.style.display = 'none';
+            passwordButton.style.display = 'inline';
+        }
+        return false;
+    };
+    
+    passwordButton.onclick = function() {
+        passwordField.style.display = 'inline';
+        passwordButton.style.display = 'none';
+        passwordField.focus();
+    }
+    
+    function loadPin() {
+        UnchainSecurity.getPin(function(err, pin) {
+            if (err) {
+                console.log('Error loading PIN');
+                return;
+            }
+            pinCode.innerHTML = pin;
+        });
+    }
+    
+    function loadIP() {
+        require('dns').lookup(require('os').hostname(), function(err, ip, fam) {
+            document.getElementById('ip').innerHTML = ip;
+        });
+    }
+
+    function savePassword() {
+        var passwordField = document.getElementById('password');
+        var newPassword = passwordField.value;
+        
+        if (newPassword) {
+            UnchainSecurity.setPassword(newPassword, function() {
+                didSetPassword();
+            });
+            passwordField.value = '';
+            return true;
+        }
+        
+        return false;
+    }
+}
+</script>
+</head>
+<body>
+    <div class="title">
+        <p>
+            Use the IP address and PIN below to configure Unchain on the Pebble app.
+        </p>
+    </div>
+        
+    <div class="row">
+        <label for="ip">IP address:</label>
+        <span id="ip" class="ip">-</span>
+    </div>
+    
+    <div class="row">
+        <label for="pin-code">PIN:</label>
+        <span id="pin-code" class="pin">----</span>
+    </div>
+    
+    <div class="row">
+        <form id="password-form">
+            <label for="password">Password:</label>
+            
+            <div style="display: inline-block; vertical-align:top;">
+            <input type="button" name="password-button" id="password-button" value="Set password" style="">
+            
+            <input type="password" name="password" id="password" style="display:none">
+            <br>
+            <span class="small">The password you use to unlock your Mac.</span>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>
