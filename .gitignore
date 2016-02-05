@@ -1,5 +1,10 @@
-# Ignore build generated files
-build
+# Pebble ignores
 
-# Ignore waf lock file
+build
 .lock-waf*
+
+
+# OS X ignores
+
+node_modules
+*.log

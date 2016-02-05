@@ -1,0 +1,47 @@
+{
+  "name": "unchain-osx",
+  "version": "0.1.0",
+  "description": "Lock and unlock your Mac from your Pebble smartwatch",
+  "main": "app/index.html",
+  "single-instance": true,
+  "window": {
+    "title": "Unchain Preferences",
+    "toolbar": false,
+    "show": false,
+    "show_in_taskbar": false,
+    "width": 400,
+    "height": 200
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nw",
+    "archive": "node build.js"
+  },
+  "author": "Mario Cecchi",
+  "license": "ISC",
+  "dependencies": {
+    "applescript": "^1.0.0",
+    "keychain": "^1.0.0"
+  },
+  "devDependencies": {
+    "nw-builder": "^2.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/macecchi/unchain-osx.git"
+  },
+  "keywords": [
+    "pebble",
+    "mac",
+    "os",
+    "x",
+    "unlock",
+    "lock",
+    "unchain",
+    "remote"
+  ],
+  "bugs": {
+    "url": "https://github.com/macecchi/unchain-osx/issues"
+  },
+  "homepage": "https://github.com/macecchi/unchain-osx#readme"
+}
